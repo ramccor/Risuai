@@ -21,6 +21,7 @@ import { onOpenUrl } from '@tauri-apps/plugin-deep-link';
 import { AccountStorage } from "./storage/accountStorage"
 import { filterBlockedRealmCards, isRealmCreatorBlocked } from "./realmBlocking"
 import { normalizeOnboarding } from "./onboarding"
+import { readCardDepthPrompt, usesCCV31, writeCardDepthPrompt } from "./ccv31"
 
 
 const EXTERNAL_HUB_URL = 'https://sv.risuai.xyz';
@@ -1062,6 +1063,7 @@ async function importCharacterCardSpec<T extends boolean = false>(card:Character
         ccAssets: ccAssets,
         lowLevelAccess: risuext?.lowLevelAccess ?? false,
         defaultVariables: data?.extensions?.risuai?.defaultVariables ?? '',
+        depth_prompt: readCardDepthPrompt(data?.extensions?.depth_prompt),
         chatFolders: [],
         prebuiltAssetCommand: data?.extensions?.risuai?.prebuiltAssetCommand ?? '',
         prebuiltAssetExclude: data?.extensions?.risuai?.prebuiltAssetExclude ?? [],
@@ -1280,7 +1282,7 @@ function createBaseV2(char:character) {
                     newGenData: char.newGenData,
                     vits: {}
                 },
-                depth_prompt: char.depth_prompt
+                depth_prompt: writeCardDepthPrompt(char.depth_prompt)
             }
         }
     }
@@ -1711,7 +1713,7 @@ export function createBaseV3(char:character){
                     hideChatIcon: char.hideChatIcon ?? false,
                     onboarding: char.onboarding
                 },
-                depth_prompt: char.depth_prompt
+                depth_prompt: writeCardDepthPrompt(char.depth_prompt)
             },
             group_only_greetings: char.group_only_greetings ?? [],
             nickname: char.nickname ?? '',
@@ -1729,6 +1731,10 @@ export function createBaseV3(char:character){
             }
             card.data.extensions[key] = char.extentions[key]
         }
+    }
+    if(usesCCV31(card.data)){
+        // ccardlib types spec_version as '3.0'; 3.1 only adds extension keys
+        (card as { spec_version: string }).spec_version = '3.1'
     }
     return card
 }
@@ -2017,7 +2023,7 @@ type CharacterCardV2Risu = {
                 },
                 vits?: {[key:string]:string}
             }
-            depth_prompt?: { depth: number, prompt: string }
+            depth_prompt?: { depth: number, prompt: string, role?: 'system'|'user'|'assistant' }
         }
     }
 }  

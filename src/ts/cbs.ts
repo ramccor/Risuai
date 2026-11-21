@@ -5,6 +5,7 @@ import type { LLMModel } from './model/modellist';
 import { LLMFlags, LLMFormat } from './model/types';
 import { get } from 'svelte/store';
 import { CurrentTriggerIdStore } from './stores.svelte';
+import { cardLanguage } from './ccv31';
 
 export const defaultCBSRegisterArg: CBSRegisterArg = {
     registerFunction: () => { throw new Error('registerFunction not implemented') },
@@ -2130,6 +2131,21 @@ export function registerCBS(arg:CBSRegisterArg) {
         },
         alias: [],
         description: 'Reverses the input string.\n\nUsage:: {{reverse::some_value}}',
+    })
+
+    registerFunction({
+        name: 'lang',
+        callback: (str, matcherArg, args, vars) => {
+            const chara = (matcherArg.chara && typeof(matcherArg.chara) !== 'string')
+                ? matcherArg.chara
+                : getDatabase().characters[getSelectedCharID()]
+            if(!chara || chara.type === 'group'){
+                return ''
+            }
+            return cardLanguage(chara.extentions)
+        },
+        alias: [],
+        description: 'Returns the language of the chat (Character Card V3.1), for example "en-GB": the card\'s stated language (extensions.localizations.language). Returns an empty string when the card states none.\n\nUsage:: {{lang}}',
     })
 
     registerFunction({

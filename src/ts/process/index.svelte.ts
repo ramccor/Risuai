@@ -33,6 +33,7 @@ import { hypaMemoryV3 } from "./memory/hypav3";
 import { getModuleAssets, getModuleToggles } from "./modules";
 import { readImage } from "../globalApi.svelte";
 import { pluginV2 } from "../plugins/plugins.svelte";
+import { depthPromptInsertIndex } from "../ccv31";
 
 export interface OpenAIChat{
     role: 'system'|'user'|'assistant'|'function'
@@ -1484,8 +1485,8 @@ export async function sendChat(chatProcessIndex = -1,arg:{
     if(currentChar.depth_prompt && currentChar.depth_prompt.prompt && currentChar.depth_prompt.prompt.length > 0){
         //depth_prompt
         const depthPrompt = currentChar.depth_prompt
-        formated.splice(formated.length - depthPrompt.depth, 0, {
-            role: 'system',
+        formated.splice(depthPromptInsertIndex(formated.length, depthPrompt.depth), 0, {
+            role: depthPrompt.role ?? 'system',
             content: risuChatParser(depthPrompt.prompt, {chara: currentChar})
         })
     }

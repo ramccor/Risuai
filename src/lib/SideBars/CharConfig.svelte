@@ -1164,6 +1164,13 @@
         <div class="flex justify-center items-center">
             <NumberInput size="sm" bind:value={DBState.db.characters[$selectedCharID].depth_prompt.depth} className="w-12"/>
             <TextInput size="sm" bind:value={DBState.db.characters[$selectedCharID].depth_prompt.prompt} className="flex-1"/>
+            <SelectInput size="sm" className="w-28" value={DBState.db.characters[$selectedCharID].depth_prompt.role ?? 'system'} onchange={(e) => {
+                DBState.db.characters[$selectedCharID].depth_prompt.role = (e.currentTarget as HTMLSelectElement).value as 'system'|'user'|'assistant'
+            }}>
+                <OptionInput value="system">system</OptionInput>
+                <OptionInput value="user">user</OptionInput>
+                <OptionInput value="assistant">assistant</OptionInput>
+            </SelectInput>
         </div>
 
         <span class="text-textcolor mt-2">{language.altGreet}</span>

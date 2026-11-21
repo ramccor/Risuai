@@ -1470,7 +1470,7 @@ export interface character{
     }
     virtualscript?:string
     scriptstate?:{[key:string]:string|number|boolean}
-    depth_prompt?: { depth: number, prompt: string }
+    depth_prompt?: { depth: number, prompt: string, role?: 'system'|'user'|'assistant' }
     extentions?:{[key:string]:any}
     largePortrait?:boolean
     lorePlus?:boolean
@@ -1580,7 +1580,7 @@ export interface groupChat{
     scenario?:string
     translatorNote?:string
     additionalData?: any
-    depth_prompt?: { depth: number, prompt: string }
+    depth_prompt?: { depth: number, prompt: string, role?: 'system'|'user'|'assistant' }
     additionalAssets?:[string, string, string][]
     utilityBot?:boolean
     license?:string

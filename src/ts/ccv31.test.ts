@@ -1,7 +1,9 @@
 import { describe, expect, test } from 'vitest'
 import {
     cardLanguage,
+    DEFAULT_GROUP_TALK,
     depthPromptInsertIndex,
+    groupTalkFromCard,
     readCardDepthPrompt,
     readTalkativeness,
     talkativenessToGroupTalk,
@@ -80,6 +82,22 @@ test('talkativenessToGroupTalk snaps to sixths', () => {
     expect(talkativenessToGroupTalk(0.5)).toBe(3 / 6)
     expect(talkativenessToGroupTalk(0.7)).toBe(4 / 6)
     expect(talkativenessToGroupTalk(1)).toBe(1)
+})
+
+describe('groupTalkFromCard', () => {
+    test('keeps the Risuai default without a value', () => {
+        expect(groupTalkFromCard(undefined)).toBe(DEFAULT_GROUP_TALK)
+    })
+    test('keeps the Risuai default for exactly 0.5', () => {
+        expect(groupTalkFromCard(0.5)).toBe(DEFAULT_GROUP_TALK)
+        expect(groupTalkFromCard('0.5')).toBe(DEFAULT_GROUP_TALK)
+        expect(groupTalkFromCard('chatty')).toBe(DEFAULT_GROUP_TALK)
+    })
+    test('uses any other value, snapped to sixths', () => {
+        expect(groupTalkFromCard(0.2)).toBe(1 / 6)
+        expect(groupTalkFromCard('0.9')).toBe(5 / 6)
+        expect(groupTalkFromCard(0)).toBe(0)
+    })
 })
 
 test('cardLanguage', () => {

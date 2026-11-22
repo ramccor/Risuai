@@ -73,6 +73,22 @@ export function talkativenessToGroupTalk(value: number): number {
     return Math.round(value * 6) / 6
 }
 
+/** Risuai's starting talk chance for a character added to a group. */
+export const DEFAULT_GROUP_TALK = 4 / 6
+
+/**
+ * The starting group talk chance for a card's `extensions.talkativeness`.
+ * Exactly 0.5 is the default other applications write on nearly every card, not a choice
+ * by the author, so it keeps Risuai's own default, as does a card without the key.
+ */
+export function groupTalkFromCard(value: unknown): number {
+    const talkativeness = readTalkativeness(value)
+    if(talkativeness === undefined || talkativeness === 0.5){
+        return DEFAULT_GROUP_TALK
+    }
+    return talkativenessToGroupTalk(talkativeness)
+}
+
 /** The language of the card's base fields (`extensions.localizations.language`), or ''. */
 export function cardLanguage(extensions: Record<string, any> | undefined): string {
     const lang = extensions?.localizations?.language

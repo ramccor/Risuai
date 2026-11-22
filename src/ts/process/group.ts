@@ -5,7 +5,7 @@ import { language } from "src/lang";
 import { get } from "svelte/store";
 import { getDatabase, setDatabase } from "../storage/database.svelte";
 import { DBState, selectedCharID } from "../stores.svelte";
-import { readTalkativeness, talkativenessToGroupTalk } from "../ccv31";
+import { groupTalkFromCard } from "../ccv31";
 
 export async function addGroupChar(){
     let selectedId = get(selectedCharID)
@@ -25,9 +25,8 @@ export async function addGroupChar(){
                     })
                 }
 
-                const talkativeness = readTalkativeness(findCharacterbyId(res)?.extentions?.talkativeness)
                 group.characters.push(res)
-                group.characterTalks.push(talkativeness === undefined ? 1 / 6 * 4 : talkativenessToGroupTalk(talkativeness))
+                group.characterTalks.push(groupTalkFromCard(findCharacterbyId(res)?.extentions?.talkativeness))
                 group.characterActive.push(true)
             }
         }
